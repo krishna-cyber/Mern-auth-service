@@ -9,9 +9,9 @@ const userService = new UserService(User);
 const authservice = new AuthService(userService, User, logger);
 async function checkAndCreateAdmin() {
   const adminSeed: UserData = {
-    firstName: "Krishna",
-    lastName: "Tiwari",
-    email: "tiwarikrishna54321@gmail.com",
+    firstName: "Admin",
+    lastName: "User",
+    email: "admin@gmail.com",
     password: String(123456),
     role: "admin",
   };

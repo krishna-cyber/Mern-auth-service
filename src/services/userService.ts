@@ -2,7 +2,7 @@ import { UserData } from "../types/types";
 import { UserDocument } from "../entity/User";
 import createHttpError from "http-errors";
 import { ROLES } from "../constants/constants";
-import { Model, Models } from "mongoose";
+import { Model } from "mongoose";
 
 class UserService {
   constructor(private User: Model<UserDocument>) {}

@@ -5,7 +5,10 @@ import tseslint from "typescript-eslint";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    files: ["**/*.{js,mjs,cjs,ts}"],
+    files: ["**/*.{mjs,cjs,ts}"],
+  },
+  {
+    ignores: ["node_modules", "dist", "build", "scripts", "coverage"],
   },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
@@ -13,7 +16,7 @@ export default [
   {
     rules: {
       "no-console": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/ban-ts-comment": "off",
     },
   },

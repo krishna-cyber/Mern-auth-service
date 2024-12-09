@@ -2,59 +2,59 @@ import app from "../../src/app";
 
 import request from "supertest";
 import { closeDatabaseConnection, connectToDatabase } from "../utils/testUtils";
-import { ROLES } from "../../src/constants/constants";
 import { User } from "../../src/entity/User";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import createJWKSMock from "mock-jwks";
+import { UserData } from "../../src/types/types";
 
 dotenv.config({
   path: ".env.test.local",
 });
 
-let jwks: ReturnType<typeof createJWKSMock>;
-
 describe("GET /auth/self", () => {
-  //get connection from the data source
-  //before all test cases this function will rul
-  beforeAll(async () => {
-    //database connnect
-    //create a user through userdata
-    //login the user and
-    // extract accessToken and refreshToken
-  });
-
-  // beforeEach(() => {
-  //   jwks.start();
-  // });
-
-  // afterEach(async () => {
-  //   //clean up the database database truncate
-  //   await User.deleteMany({});
-  //   jwks.stop(); //stop the mock server
-  // });
-
-  afterAll(async () => {
-    //delete all the registered users
-    //close the database connection
-
-    await closeDatabaseConnection();
-  });
-
-  //valid user data for all test cases
-  const userData = {
+  const validUserData: UserData = {
+    firstName: "Krishna",
+    lastName: "Tiwari",
     email: "tiwarikrishna54321@gmail.com",
     password: "password",
-    firstName: "Krishna",
-    lastName: "Tiware",
   };
+
+  let accessToken: string;
+  // let refreshToken: string;
+  beforeAll(async () => {
+    //database connnect
+    await connectToDatabase();
+
+    await User.deleteMany({});
+    //create a user through userdata
+    //@ts-ignore
+    await request(app).post("/auth/register").send(validUserData);
+    //login the user and
+    //@ts-ignore
+    const response = await request(app)
+      .post("/auth/login")
+      .send({ email: validUserData.email, password: validUserData.password });
+    // extract accessToken and refreshToken
+    const cookies: string[] = response.headers[
+      "set-cookie"
+    ] as unknown as string[];
+    const accessTokenCookie = cookies.find((cookie: string) =>
+      cookie.includes("accessToken")
+    );
+    const refreshTokenCookie = cookies.find((cookie: string) =>
+      cookie.includes("refreshToken")
+    );
+    accessToken = accessTokenCookie.split("=")[1].split(";")[0];
+    // refreshToken = refreshTokenCookie.split("=")[1].split(";")[0];
+  });
+
+  afterAll(async () => {
+    await closeDatabaseConnection();
+    //delete all the users
+    User.deleteMany({});
+  });
+
   describe("given all fields", () => {
     it("should return 200 status code", async () => {
-      const accessToken = jwks.token({
-        sub: "1",
-        role: ROLES.CUSTOMER,
-      });
-
       //@ts-ignore
       const response = await request(app)
         .get("/auth/self")
@@ -65,33 +65,26 @@ describe("GET /auth/self", () => {
     });
 
     it("should return user data", async () => {
-      //register a user
-      //@ts-ignore
-      const response = await request(app).post("/auth/register").send(userData);
-
-      const accessToken = jwks.token({
-        sub: String(response.body.result._id),
-        role: response.body.role,
-      });
-
       //@ts-ignore
       const userSelf = await request(app)
         .get("/auth/self")
         .set("Cookie", [`accessToken=${accessToken}`]);
-
       //assert
-      expect(userSelf.body._id).toBe(response.body.result._id);
+      expect(userSelf.body.result.email).toBe(validUserData.email);
     });
 
-    it.todo("should return 401 status code if accessToken is not provided");
-    it.todo(
-      "should return 401 status code if accessToken is invalid or expired"
-    );
+    it("should return 401 status code if accessToken is not provided", async () => {
+      // @ts-ignore
+      const response = await request(app).get("/auth/self").send();
+      expect(response.statusCode).toBe(401);
+    });
+    it("should return 401 status code if accessToken is invalid or expired", async () => {
+      // @ts-ignore
+      const response = await request(app)
+        .get("/auth/self")
+        .set("Cookie", [`accessToken=invalid`]);
 
-    it.todo("should clear the cookies if user is logged out");
+      expect(response.statusCode).toBe(401);
+    });
   });
-
-  it.todo(
-    "should return new accessToken if refreshToken is provided and refresh the token also"
-  );
 });

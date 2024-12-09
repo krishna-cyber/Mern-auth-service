@@ -6,7 +6,6 @@ import {
 } from "../utils/testUtils";
 import { ROLES } from "../../src/constants/constants";
 import { User } from "../../src/entity/User";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { RefreshToken } from "../../src/entity/RefreshToken";
 import app from "../../src/app";
@@ -19,23 +18,20 @@ describe("POST /auth/register", () => {
   //before all test cases this function will rul
   beforeAll(async () => {
     await connectToDatabase();
-    mongoose.modelNames().map(async (model) => {
-      await mongoose.models[model].deleteMany({});
-    });
-    // await User.deleteMany({}); //clean up the database
-    // await RefreshToken.deleteMany({}); //clean up the database
+
+    await User.deleteMany({});
+    await RefreshToken.deleteMany({});
   });
 
   afterEach(async () => {
     //clean up the database database truncate
     await User.deleteMany({});
-    mongoose.modelNames().map(async (model) => {
-      await mongoose.models[model].deleteMany({});
-    });
+    await RefreshToken.deleteMany({});
   });
 
   afterAll(async () => {
     await User.deleteMany({});
+    await RefreshToken.deleteMany({});
     await closeDatabaseConnection();
   });
 
@@ -215,7 +211,7 @@ describe("POST /auth/register", () => {
         password: "13456",
       };
       //@ts-ignore
-      const response = await request(app).post("/auth/register").send(userData);
+      await request(app).post("/auth/register").send(userData);
 
       //Act
       const refreshToken = await RefreshToken.find({});

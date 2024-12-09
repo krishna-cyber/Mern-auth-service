@@ -46,7 +46,7 @@ class AuthController {
       if (!result.isEmpty()) {
         return res.status(400).json({ errors: result.array() });
       }
-      const { firstName, lastName, email, password } = req.body;
+      const { firstName, lastName, email, password, role } = req.body;
       this.logger.debug(`User registration request`, {
         firstName,
         lastName,
@@ -57,6 +57,7 @@ class AuthController {
         lastName,
         email,
         password,
+        role,
       });
       this.logger.info(`User registered successfully`, {
         firstName,

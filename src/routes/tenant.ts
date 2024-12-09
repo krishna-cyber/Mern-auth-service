@@ -12,6 +12,7 @@ import logger from "../config/logger";
 import authenticate from "../middlewares/authenticate";
 import canAccess from "../middlewares/canAccess";
 import { ROLES } from "../constants/constants";
+import tenantCreateValidator from "../validators/tenantCreateValidator";
 const tenantRouter = Router();
 
 const tenantservice = new TenantService(Tenants);
@@ -19,6 +20,7 @@ const tenantController = new TenantController(tenantservice, logger);
 
 tenantRouter.post(
   "/",
+  tenantCreateValidator as RequestHandler,
   authenticate as RequestHandler,
   canAccess([ROLES.ADMIN]) as RequestHandler,
   (req: Request, res: Response, next: NextFunction) =>

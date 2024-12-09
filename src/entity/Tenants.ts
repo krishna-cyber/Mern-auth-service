@@ -11,6 +11,7 @@ const tenantSchema = new mongoose.Schema<TenantsDocument>(
       type: String,
       required: true,
       maxlength: 30,
+      unique: true,
     },
     address: {
       type: String,

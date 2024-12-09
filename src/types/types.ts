@@ -18,4 +18,13 @@ interface AuthCookie {
   refreshToken: string;
 }
 
-export { UserData, AuthRequest, AuthCookie };
+interface TenantData {
+  name: string;
+  address: string;
+}
+
+interface RegisterTenantRequest extends Request {
+  body: TenantData;
+}
+
+export { UserData, AuthRequest, AuthCookie, RegisterTenantRequest };
