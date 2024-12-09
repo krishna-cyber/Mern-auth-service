@@ -18,7 +18,7 @@ const app = express();
 app.use(express.static("public"));
 app.use(cookieParser());
 app.use(express.json());
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
 app.use(morgan("dev"));
 
 // get connected with database and start the server

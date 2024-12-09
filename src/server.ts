@@ -12,7 +12,6 @@ const startServer = () => {
       logger.debug(`Debugging is enabled!`); // this log is not consoled because we set priority level upto only info in logger transport
     });
   } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     logger.info(`Error: ${error}`);
     process.exit(1);
   }
