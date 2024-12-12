@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { HttpError } from "http-errors";
 import logger from "./config/logger";
 import authRouter from "./routes/auth";
+import cors from "cors";
 // import "./data-source";
 
 import "../src/data-source";
@@ -15,6 +16,12 @@ import userRouter from "./routes/user";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: ["http://localhost:5173/"],
+    credentials: true,
+  })
+);
 app.use(express.static("public"));
 app.use(cookieParser());
 app.use(express.json());
