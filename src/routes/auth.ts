@@ -63,7 +63,7 @@ authRouter.post(
   }
 );
 
-authRouter.post(
+authRouter.get(
   "/logout",
   authenticate as RequestHandler,
   parseRefreshToken as RequestHandler,
