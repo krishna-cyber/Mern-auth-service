@@ -89,7 +89,7 @@ class AuthController {
   }
 
   //login controller
-  async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const result = validationResult(req);
       if (!result.isEmpty()) {
@@ -128,10 +128,11 @@ class AuthController {
         await this.tokenService.getRefreshToken(payload);
 
       this.resCookieAccessTokenAndRefreshToken(res, accessToken, refreshToken);
+
+      console.log(user._id);
       //@ts-ignore
-      const { password: pw, ...userData } = user._doc;
       res.status(200).json({
-        result: userData,
+        result: { id: user._id },
         message: "User login successfully",
       });
     } catch (error) {

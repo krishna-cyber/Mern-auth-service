@@ -18,7 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173/"],
+    origin: ["http://localhost:5173"],
     credentials: true,
   })
 );
@@ -28,21 +28,10 @@ app.use(express.json());
 
 app.use(morgan("dev"));
 
-// get connected with database and start the server
-
 // router binding
 app.use("/auth", authRouter);
 app.use("/tenants", tenantRouter);
 app.use("/users", userRouter);
-
-// app.post(
-//   "/auth/register",
-//   (req: Request, res: Response, next: NextFunction) => {
-//     const err = createHttpError(401, "You can't access this route");
-//     res.status(200).json({ message: "Hello World" });
-//     next(err);
-//   }
-// );
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   logger.error(err.message, err.statusCode);
