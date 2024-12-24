@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
     tenantId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tenant",
+      default: null,
       //dynamic value based on role
       required: function () {
         return this.role === ROLES.MANAGER;
