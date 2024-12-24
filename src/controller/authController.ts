@@ -29,7 +29,7 @@ class AuthController {
       domain: "localhost",
       httpOnly: true,
       sameSite: "strict",
-      maxAge: 1000 * 60 * 60, //1 hr to expire
+      maxAge: 1000 * 60, //1 minute to expire
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -65,16 +65,6 @@ class AuthController {
         email,
       });
 
-      const payload = {
-        sub: String(user._id),
-        role: user.role,
-      };
-
-      const accessToken: string = this.tokenService.getAccessToken(payload);
-      const refreshToken: string =
-        await this.tokenService.getRefreshToken(payload);
-
-      this.resCookieAccessTokenAndRefreshToken(res, accessToken, refreshToken);
       // @ts-ignore
       const { password: pw, ...userData } = user._doc;
 
@@ -129,7 +119,6 @@ class AuthController {
 
       this.resCookieAccessTokenAndRefreshToken(res, accessToken, refreshToken);
 
-      console.log(user._id);
       //@ts-ignore
       res.status(200).json({
         result: { id: user._id },
