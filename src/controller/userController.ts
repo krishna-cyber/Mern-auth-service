@@ -1,12 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, query, Request, Response } from "express";
 import { Logger } from "winston";
 import { ERROR_MESSAGES, ROLES } from "../constants/constants";
 import UserService from "../services/userService";
 import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
 import { UserData } from "../types/types";
-import { Require_id } from "mongoose";
-
+import { matchedData } from "express-validator";
 interface RegisterUserRequest extends Request {
   body: UserData;
 }
@@ -42,13 +41,25 @@ export default class UserController {
   }
 
   async getUsers(req: Request, res: Response, next: NextFunction) {
+    const queryParams: {
+      currentPage: number;
+      pageSize: number;
+    } = matchedData(req, { onlyValidData: true });
+
     try {
-      const users = await this.userService.getUserLists();
+      const { users, totalDocuments } = await this.userService.getUserLists(
+        queryParams.currentPage,
+        queryParams.pageSize
+      );
 
       res.status(200).json({
         result: users,
         message: "User list fetched successfully",
-        meta: null,
+        meta: {
+          currentPage: queryParams.currentPage,
+          pageSize: queryParams.pageSize,
+          totalDocuments,
+        },
       });
     } catch (error) {
       const err = createHttpError(500, "Error while fetching user list");

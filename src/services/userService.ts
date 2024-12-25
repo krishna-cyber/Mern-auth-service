@@ -35,8 +35,13 @@ class UserService {
     return await this.User.findById(id);
   }
 
-  async getUserLists() {
-    return await this.User.find({});
+  async getUserLists(currentPage: number, pageSize: number) {
+    const users = await this.User.find({})
+      .skip((currentPage - 1) * pageSize)
+      .limit(pageSize);
+    const totalDocuments = await this.User.find({}).countDocuments();
+
+    return { totalDocuments, users };
   }
 
   async deleteUserById(_id: string) {

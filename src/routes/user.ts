@@ -13,6 +13,7 @@ import UserService from "../services/userService";
 import { User } from "../entity/User";
 import UserController from "../controller/userController";
 import validateUserUpdataData from "../validators/validateUserUpdataData";
+import userQueryParamsValidator from "../validators/userQueryParamsValidator";
 const userRouter = Router();
 
 const userService = new UserService(User);
@@ -30,6 +31,7 @@ userRouter.get(
   "/",
   authenticate as RequestHandler,
   canAccess([ROLES.ADMIN]) as RequestHandler,
+  userQueryParamsValidator,
   (req: Request, res: Response, next: NextFunction) =>
     userController.getUsers(req, res, next)
 );
