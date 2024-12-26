@@ -113,7 +113,8 @@ class AuthController {
         role: user.role,
       };
 
-      const accessToken: string = this.tokenService.getAccessToken(payload);
+      const accessToken: string =
+        await this.tokenService.getAccessToken(payload);
       const refreshToken: string =
         await this.tokenService.getRefreshToken(payload);
 
