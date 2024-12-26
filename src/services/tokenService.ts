@@ -54,7 +54,6 @@ class TokenService {
       });
       return refreshToken.save();
     } catch (error) {
-      console.log(error);
       const err = createHttpError(500, "Error saving refresh token");
       throw err;
     }
