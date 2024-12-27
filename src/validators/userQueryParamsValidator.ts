@@ -10,6 +10,20 @@ export default checkSchema(
         },
       },
     },
+    role: {
+      customSanitizer: {
+        options: (value: string) => {
+          return value ? value : null;
+        },
+      },
+    },
+    search: {
+      customSanitizer: {
+        options: (value: string) => {
+          return value ? value : "";
+        },
+      },
+    },
     pageSize: {
       customSanitizer: {
         options: (value) => {

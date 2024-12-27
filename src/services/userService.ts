@@ -35,13 +35,106 @@ class UserService {
     return await this.User.findById(id);
   }
 
-  async getUserLists(currentPage: number, pageSize: number) {
-    const users = await this.User.find({})
+  async getUserLists(
+    currentPage: number,
+    pageSize: number,
+    role: string,
+    searchString: string = ""
+  ) {
+    let results;
+    let response;
+    if (role) {
+      // mongodb aggregate
+      results = await this.User.aggregate([
+        {
+          $match: {
+            role: role,
+          },
+        },
+        {
+          $match: {
+            $or: [
+              { firstName: { $regex: searchString, $options: "i" } },
+              {
+                lastName: { $regex: searchString, $options: "i" },
+              },
+              {
+                email: { $regex: searchString, $options: "i" },
+              },
+            ],
+          },
+        },
+        {
+          $facet: {
+            data: [
+              {
+                $project: {
+                  password: 0,
+                },
+              },
+            ],
+
+            totalCount: [
+              {
+                $count: "count",
+              },
+            ],
+          },
+        },
+      ])
+        .skip((currentPage - 1) * pageSize)
+        .limit(pageSize);
+      response = {
+        users: results[0]?.data || [],
+        totalDocuments: results[0]?.totalCount[0]?.count || 0,
+      };
+      return response;
+    }
+
+    // const users = await this.User.find({})
+    //   .skip((currentPage - 1) * pageSize)
+    //   .limit(pageSize);
+    results = await this.User.aggregate([
+      {
+        $match: {
+          $or: [
+            { firstName: { $regex: searchString, $options: "i" } },
+            {
+              lastName: { $regex: searchString, $options: "i" },
+            },
+            {
+              email: { $regex: searchString, $options: "i" },
+            },
+          ],
+        },
+      },
+      {
+        $facet: {
+          data: [
+            {
+              $project: {
+                password: 0,
+              },
+            },
+          ],
+
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+    ])
       .skip((currentPage - 1) * pageSize)
       .limit(pageSize);
-    const totalDocuments = await this.User.find({}).countDocuments();
 
-    return { totalDocuments, users };
+    response = {
+      users: results[0]?.data || [],
+      totalDocuments: results[0]?.totalCount[0]?.count || 0,
+    };
+
+    return response;
   }
 
   async deleteUserById(_id: string) {
