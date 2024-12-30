@@ -12,6 +12,7 @@ import logger from "../config/logger";
 import authenticate from "../middlewares/authenticate";
 import canAccess from "../middlewares/canAccess";
 import { ROLES } from "../constants/constants";
+import queryParamValidator from "../validators/queryParamsValidator";
 import tenantCreateValidator from "../validators/tenantCreateValidator";
 const tenantRouter = Router();
 
@@ -23,6 +24,7 @@ tenantRouter.post(
   tenantCreateValidator as RequestHandler,
   authenticate as RequestHandler,
   canAccess([ROLES.ADMIN]) as RequestHandler,
+
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.createTenant(req, res, next)
 );
@@ -32,13 +34,14 @@ tenantRouter.get(
   authenticate as RequestHandler,
   canAccess([ROLES.ADMIN]) as RequestHandler,
   (req: Request, res: Response, next: NextFunction) =>
-    tenantController.getTenants(req, res, next)
+    tenantController.getTenantsList(req, res, next)
 );
 
 tenantRouter.get(
   "/",
   authenticate as RequestHandler,
   canAccess([ROLES.ADMIN]) as RequestHandler,
+  queryParamValidator,
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.getTenants(req, res, next)
 );

@@ -19,13 +19,58 @@ export default class TenantService {
     }
   }
 
-  async getTenants() {
+  async getTenantsLists() {
     try {
       return await this.Tenant.find({});
     } catch (error) {
       const err = createHttpError(500, "Error while fetching tenants");
       throw err;
     }
+  }
+
+  async getTenants(
+    currentPage: number,
+    pageSize: number,
+    searchString: string = ""
+  ) {
+    const results = await this.Tenant.aggregate([
+      {
+        $match: {
+          $or: [
+            { name: { $regex: `^.*${searchString}.*$`, $options: "i" } },
+            {
+              address: { $regex: `^.*${searchString}.*$`, $options: "i" },
+            },
+          ],
+        },
+      },
+
+      {
+        $facet: {
+          data: [
+            {
+              $skip: (currentPage - 1) * pageSize,
+            },
+            {
+              $limit: pageSize,
+            },
+          ],
+
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+    ]);
+
+    const response = {
+      tenants: results[0]?.data || [],
+      totalDocuments: results[0]?.totalCount[0]?.count || 0,
+    };
+
+    return response;
   }
 
   async getTenantById(id: string) {

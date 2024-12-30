@@ -48,8 +48,6 @@ export default class UserController {
       search: string;
     } = matchedData(req, { onlyValidData: true });
 
-    console.log(queryParams.search);
-
     try {
       const { users, totalDocuments } = await this.userService.getUserLists(
         queryParams.currentPage,

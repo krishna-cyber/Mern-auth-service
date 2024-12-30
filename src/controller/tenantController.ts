@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { NextFunction, query, Request, Response } from "express";
+import { matchedData, validationResult } from "express-validator";
 import TenantService from "../services/tenantService";
 import { Logger } from "winston";
 import { ERROR_MESSAGES } from "../constants/constants";
@@ -41,14 +41,43 @@ export default class TenantController {
     }
   }
 
-  async getTenants(req: Request, res: Response, next: NextFunction) {
+  async getTenantsList(req: Request, res: Response, next: NextFunction) {
     try {
-      const tenants = await this.tenantService.getTenants();
+      const tenants = await this.tenantService.getTenantsLists();
 
       res.status(200).json({
         result: tenants,
         message: "Tenants fetched successfully",
         meta: null,
+      });
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
+  async getTenants(req: Request, res: Response, next: NextFunction) {
+    const queryParams: {
+      currentPage: number;
+      pageSize: number;
+      role: string | null;
+      search: string;
+    } = matchedData(req, { onlyValidData: true });
+    try {
+      const { tenants, totalDocuments } = await this.tenantService.getTenants(
+        queryParams.currentPage,
+        queryParams.pageSize,
+        queryParams.search
+      );
+
+      res.status(200).json({
+        result: tenants,
+        message: "Tenants fetched successfully",
+        meta: {
+          currentPage: queryParams.currentPage,
+          pageSize: queryParams.pageSize,
+          totalDocuments,
+        },
       });
     } catch (error) {
       next(error);
