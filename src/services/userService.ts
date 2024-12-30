@@ -54,12 +54,12 @@ class UserService {
         {
           $match: {
             $or: [
-              { firstName: { $regex: searchString, $options: "i" } },
+              { firstName: { $regex: `.*${searchString}.*`, $options: "i" } },
               {
-                lastName: { $regex: searchString, $options: "i" },
+                lastName: { $regex: `.*${searchString}.*`, $options: "i" },
               },
               {
-                email: { $regex: searchString, $options: "i" },
+                email: { $regex: `.*${searchString}.*`, $options: "i" },
               },
             ],
           },
@@ -72,6 +72,12 @@ class UserService {
                   password: 0,
                 },
               },
+              {
+                $skip: (currentPage - 1) * pageSize,
+              },
+              {
+                $limit: pageSize,
+              },
             ],
 
             totalCount: [
@@ -81,9 +87,8 @@ class UserService {
             ],
           },
         },
-      ])
-        .skip((currentPage - 1) * pageSize)
-        .limit(pageSize);
+      ]);
+
       response = {
         users: results[0]?.data || [],
         totalDocuments: results[0]?.totalCount[0]?.count || 0,
@@ -91,23 +96,21 @@ class UserService {
       return response;
     }
 
-    // const users = await this.User.find({})
-    //   .skip((currentPage - 1) * pageSize)
-    //   .limit(pageSize);
     results = await this.User.aggregate([
       {
         $match: {
           $or: [
-            { firstName: { $regex: searchString, $options: "i" } },
+            { firstName: { $regex: `^.*${searchString}.*$`, $options: "i" } },
             {
-              lastName: { $regex: searchString, $options: "i" },
+              lastName: { $regex: `^.*${searchString}.*$`, $options: "i" },
             },
             {
-              email: { $regex: searchString, $options: "i" },
+              email: { $regex: `^.*${searchString}.*$`, $options: "i" },
             },
           ],
         },
       },
+
       {
         $facet: {
           data: [
@@ -115,6 +118,12 @@ class UserService {
               $project: {
                 password: 0,
               },
+            },
+            {
+              $skip: (currentPage - 1) * pageSize,
+            },
+            {
+              $limit: pageSize,
             },
           ],
 
@@ -125,9 +134,7 @@ class UserService {
           ],
         },
       },
-    ])
-      .skip((currentPage - 1) * pageSize)
-      .limit(pageSize);
+    ]);
 
     response = {
       users: results[0]?.data || [],
