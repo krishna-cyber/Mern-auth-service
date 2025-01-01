@@ -17,7 +17,7 @@ export default class UserController {
   ) {}
 
   async createUser(req: Request, res: Response, next: NextFunction) {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password, role, tenantId } = req.body;
     try {
       const user = await this.userService.create({
         firstName,
@@ -25,6 +25,7 @@ export default class UserController {
         email,
         password,
         role,
+        tenantId,
       });
       this.logger.info(`User created successfully`, user._id);
       // @ts-ignore

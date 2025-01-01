@@ -7,6 +7,7 @@ interface UserData {
   email: string;
   password: string;
   role?: string;
+  tenantId?: string;
 }
 
 interface AuthRequest extends Request {

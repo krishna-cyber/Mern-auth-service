@@ -7,14 +7,34 @@ import { Model } from "mongoose";
 class UserService {
   constructor(private User: Model<UserDocument>) {}
 
-  async create({ firstName, lastName, email, password, role }: UserData) {
-    const user = new this.User({
-      firstName,
-      lastName,
-      email,
-      password,
-      role: role ?? ROLES.CUSTOMER,
-    });
+  async create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    tenantId,
+  }: UserData) {
+    let user;
+    if (role == "manager") {
+      user = new this.User({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId,
+      });
+    } else {
+      user = new this.User({
+        firstName,
+        lastName,
+        email,
+        password,
+        role: role ?? ROLES.CUSTOMER,
+      });
+    }
+
     //check for user already exist or not in the database
     const existingUser = await this.User.findOne({ email });
 
@@ -32,7 +52,7 @@ class UserService {
   }
 
   async findUserById(id: string) {
-    return await this.User.findById(id);
+    return await this.User.findById(id).populate("tenantId");
   }
 
   async getUserLists(
