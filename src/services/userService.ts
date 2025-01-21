@@ -5,7 +5,7 @@ import { ROLES } from "../constants/constants";
 import { Model } from "mongoose";
 
 class UserService {
-  constructor(private User: Model<UserDocument>) {}
+  constructor(private readonly User: Model<UserDocument>) {}
 
   async create({
     firstName,
