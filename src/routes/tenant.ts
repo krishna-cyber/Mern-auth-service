@@ -29,12 +29,8 @@ tenantRouter.post(
     tenantController.createTenant(req, res, next)
 );
 
-tenantRouter.get(
-  "/lists",
-  // authenticate as RequestHandler,
-  // canAccess([ROLES.ADMIN]) as RequestHandler,
-  (req: Request, res: Response, next: NextFunction) =>
-    tenantController.getTenantsList(req, res, next)
+tenantRouter.get("/lists", (req: Request, res: Response, next: NextFunction) =>
+  tenantController.getTenantsList(req, res, next)
 );
 
 tenantRouter.get(
