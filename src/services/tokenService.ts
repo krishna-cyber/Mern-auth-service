@@ -21,7 +21,6 @@ class TokenService {
       const err = createHttpError(500, "Error generating private key for JWT");
       throw err;
     }
-    return privateK;
   }
 
   //return accessToken
