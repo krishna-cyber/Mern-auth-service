@@ -29,7 +29,7 @@ class TokenService {
     const accessTokenPrivateKey = this.getAccessTokenPrivateKey();
     return jwt.sign(payload, accessTokenPrivateKey, {
       algorithm: "RS256",
-      expiresIn: "1h",
+      expiresIn: "1min",
       issuer: "authService",
     });
   }
@@ -40,7 +40,7 @@ class TokenService {
     return jwt.sign(payload, String(Config.JWT_REFRESH_TOKEN_SECRET), {
       jwtid: String(_id),
       algorithm: "HS256",
-      expiresIn: "30d",
+      expiresIn: "1d",
       issuer: "authService",
     });
   }

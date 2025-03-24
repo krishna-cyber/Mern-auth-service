@@ -14,10 +14,10 @@ interface RegisterUserRequest extends Request {
 }
 class AuthController {
   constructor(
-    private tokenService: TokenService,
-    private userService: UserService,
-    private credentialService: CredentialService,
-    private logger: Logger
+    private readonly tokenService: TokenService,
+    private readonly userService: UserService,
+    private readonly credentialService: CredentialService,
+    private readonly logger: Logger
   ) {}
 
   async resCookieAccessTokenAndRefreshToken(
