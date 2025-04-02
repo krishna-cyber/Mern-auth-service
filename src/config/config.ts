@@ -24,6 +24,6 @@ const Config = {
   PRIVATE_KEY,
 };
 
-// Object.freeze(Config);
+Object.freeze(Config);
 
 export { Config, envPath };
