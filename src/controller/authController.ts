@@ -111,6 +111,9 @@ class AuthController {
       const payload = {
         sub: String(user._id),
         role: user.role,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
       };
 
       const accessToken: string = this.tokenService.getAccessToken(payload);
